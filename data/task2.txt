@@ -1,0 +1,46 @@
+Write your Task 2 answers in this file
+
+2.1 ---------------------------------------------------------------
+    mongoimport -hlocalhost --port=27017 -dbedandbreakfast -clistings_and_reviews data/listings.json 
+
+2.2 ---------------------------------------------------------------
+    
+    db.listings.insertMany(
+        db.listings_and_reviews.find(
+            {
+            "address.country":
+                {
+                $regex:'australia',
+                $options: 'i'
+                }
+            }
+            ).toArray()
+    );
+
+2.3 ---------------------------------------------------------------
+
+    db.reviews.insertMany(
+        db.listings.aggregate([
+                {
+                    $project: {
+                    "reviews._id":1,
+                    "reviews.date":1, 
+                    "reviews.listing_id":1,
+                    "reviews.reviewer_name":{$replaceAll:{input:"reviews.reviewer_name", find:",", replacement:" "}},
+                    
+                    "reviews.comments":{$replaceAll:{input:"reviews.comments", find:"\r", replacement:""},
+                                        $replaceAll:{input:"reviews.comments", find:"\n", replacement:""}}
+                                }
+                }
+            ]).toArray()
+        );
+
+2.4  ---------------------------------------------------------------
+
+    db.listings.updateMany(
+        {},
+        {$unset:{reviews:""}}
+    );
+
+2.5  
+    mongoexport --db=bedandbreakfast --collection=reviews --type=csv --fields=date,listing_id,reviewer_name,comments --out=/data/reviews.csv
