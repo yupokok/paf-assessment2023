@@ -63,7 +63,10 @@ public class ListingsService {
 	// You may only add annotations and throw exceptions to this method
 	
 	public void createBooking(Bookings booking) {
-		
+		User user = new User(booking.getEmail(), booking.getName());
+		if (bookingsRepo.userExists(booking.getEmail()).isEmpty()) {
+			bookingsRepo.newUser(user);
+		}
 		bookingsRepo.newBookings(booking);
 	}
 

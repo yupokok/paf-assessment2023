@@ -96,22 +96,22 @@ public class BnBController {
 	}
 
 	// TODO: Task 6
-	@PostMapping("/accommodation")
-	@ResponseBody
-	public ResponseEntity<String> bookIt(@RequestBody String name, @RequestBody String email, @RequestBody String id, @RequestBody int nights){
+	@PostMapping(path = "/accommodation", consumes = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<String> bookIt(@RequestBody String payload){
 
-
+		JsonObject jo = Json.createReader(new StringReader(payload)).readObject();
 		Bookings booking = new Bookings();
-		booking.setListingId(id);
-		booking.setEmail(email);
-		booking.setDuration(nights);
-		listingsSvc.createBooking(booking);
-		
+		booking.setListingId(jo.getString("name"));
+		booking.setEmail(jo.getString("email"));
+		booking.setDuration(jo.getInt("nights"));
+		booking.setListingId(jo.getString("id"));
 
+		listingsSvc.createBooking(booking);
+	
         return ResponseEntity
             .status(HttpStatus.OK)
             .contentType(MediaType.APPLICATION_JSON)
-            .body("{ }");
+            .body(JsonObject.EMPTY_JSON_OBJECT.toString());
     }
 }	
 		
