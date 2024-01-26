@@ -24,7 +24,7 @@ create table reviews (
    id int auto_increment,
    date timestamp,
    listing_id varchar(20),
-   reviewer_name varchar(20) not null,
+   reviewer_name varchar(64) not null,
    comments text,
 
    primary key(id)

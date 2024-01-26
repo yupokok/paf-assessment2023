@@ -21,26 +21,32 @@ Write your Task 2 answers in this file
 
     db.reviews.insertMany(
         db.listings.aggregate([
-                {
-                    $project: {
-                    "reviews._id":1,
-                    "reviews.date":1, 
-                    "reviews.listing_id":1,
-                    "reviews.reviewer_name":{$replaceAll:{input:"reviews.reviewer_name", find:",", replacement:" "}},
-                    
-                    "reviews.comments":{$replaceAll:{input:"reviews.comments", find:"\r", replacement:""},
-                                        $replaceAll:{input:"reviews.comments", find:"\n", replacement:""}}
-                                }
+            {$unwind:"$reviews"},
+            {$project:{
+                "reviews._id":1, "reviews.date":1, "reviews.listing_id":1,
+                "reviews.reviewer_name":{$replaceAll:{input:"$reviews.reviewer_name", find:",", replacement:" "}},
+                "reviews.comments":{$replaceAll:{input:"$reviews.comments", find:"\r", replacement:""}
                 }
-            ]).toArray()
-        );
-
+            }},
+            {$addFields:{
+                _id:"$reviews._id", date:"$reviews.date", listing_id:"$reviews.listing_id", reviewer_name:"$reviews.reviewer_name",
+                comments:{$replaceAll:{input:"$reviews.comments", find:"\n", replacement:""}},
+            }}
+        ]).toArray(),
+        {$unset:{reviews:""}}
+    );
+      
 2.4  ---------------------------------------------------------------
-
+   
     db.listings.updateMany(
         {},
         {$unset:{reviews:""}}
     );
 
-2.5  
+2.5  ---------------------------------------------------------------
+    
     mongoexport --db=bedandbreakfast --collection=reviews --type=csv --fields=date,listing_id,reviewer_name,comments --out=/data/reviews.csv
+
+2.6 ---------------------------------------------------------------
+
+    
