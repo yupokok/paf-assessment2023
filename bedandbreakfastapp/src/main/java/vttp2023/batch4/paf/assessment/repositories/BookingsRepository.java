@@ -3,6 +3,8 @@ package vttp2023.batch4.paf.assessment.repositories;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.repository.query.QueryLookupStrategy;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Repository;
@@ -33,11 +35,24 @@ public class BookingsRepository {
 	// IMPORTANT: DO NOT MODIFY THE SIGNATURE OF THIS METHOD.
 	// You may only add throw exceptions to this method
 	public void newUser(User user) {
+
+		SqlRowSet rs = template.queryForRowSet(Queries.SQL_COUNT_EMAIL, user.email());
+		if (!rs.next()) {
+			template.update(Queries.SQL_ADD_USER, user.name(),user.email());
+		} 
 	}
 
 	// TODO: Task 6
 	// IMPORTANT: DO NOT MODIFY THE SIGNATURE OF THIS METHOD.
 	// You may only add throw exceptions to this method
-	public void newBookings(Bookings bookings) {
+
+	public void newBookings(Bookings booking) {
+
+		User user = new User(booking.getEmail(), booking.getName());
+
+	template.update(Queries.SQL_SAVE_BOOKING, booking.getBookingId(), booking.getListingId(), booking.getDuration(), booking.getName(), booking.getEmail());
+
+		}
+
 	}
-}
+
