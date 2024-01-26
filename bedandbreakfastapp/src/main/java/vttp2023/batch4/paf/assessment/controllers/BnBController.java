@@ -1,8 +1,10 @@
 package vttp2023.batch4.paf.assessment.controllers;
 
+import java.io.StringReader;
 import java.util.List;
 import java.util.Optional;
 
+import org.bson.json.JsonReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.MergedAnnotations.Search;
 import org.springframework.http.HttpStatus;
@@ -22,6 +24,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import jakarta.json.Json;
 import jakarta.json.JsonArray;
 import jakarta.json.JsonArrayBuilder;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonObjectBuilder;
 import vttp2023.batch4.paf.assessment.models.Accommodation;
 import vttp2023.batch4.paf.assessment.models.Bookings;
 import vttp2023.batch4.paf.assessment.models.User;
@@ -95,6 +99,8 @@ public class BnBController {
 	@PostMapping("/accommodation")
 	@ResponseBody
 	public ResponseEntity<String> bookIt(@RequestBody String name, @RequestBody String email, @RequestBody String id, @RequestBody int nights){
+
+
 		Bookings booking = new Bookings();
 		booking.setListingId(id);
 		booking.setEmail(email);

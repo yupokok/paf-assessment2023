@@ -1,24 +1,26 @@
-FROM maven:eclipse-temurin AS builder
-
-WORKDIR /src
-
-COPY mvnw .
-COPY mvnw.cmd .
-COPY .mvn .mvn
-COPY src src
-COPY pom.xml .
-
-RUN mvn package -Dmaven.test.skip=true
-
-FROM openjdk:21-jdk-slim
+FROM maven:3-eclipse-temurin-21 AS builder
 
 WORKDIR /app
 
-COPY --from=builder /src/target/assessment-0.0.1-SNAPSHOT.jar app.jar
 
-ENV PORT=8080 SPRING_DATASOURCE_URL=
-ENV SPRING_DATA_MONGODB_URI= SPRING_DATA_MONGODB_DATABASE=
+COPY mvnw .
+COPY mvnw.cmd .
+COPY pom.xml .
+COPY .mvn .mvn
+COPY src src
+
+RUN mvn package -Dmaven.test.skip=true
+
+FROM openjdk:21-jdk-bullseye
+
+WORKDIR /app 
+
+COPY --from=builder /app/target/assessment-0.0.1-SNAPSHOT.jar bnbapp.jar
+
+
+ENV PORT=8080 
+ENV SPRING_DATA_MONGODB_URI=mongodb://localhost:27017/bedandbreakfast
 
 EXPOSE ${PORT}
 
-ENTRYPOINT SERVER_PORT=${PORT} java -jar app.jar
+ENTRYPOINT SERVER_PORT=${PORT} java -jar bnbapp.jar
