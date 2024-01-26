@@ -94,14 +94,18 @@ public class BnBController {
 	// TODO: Task 6
 	@PostMapping("/accommodation")
 	@ResponseBody
-	public ResponseEntity<String> bookIt(@ModelAttribute Bookings booking, @RequestBody String name, @RequestBody String email, @RequestBody String id, @RequestBody int nights){
-
+	public ResponseEntity<String> bookIt(@RequestBody String name, @RequestBody String email, @RequestBody String id, @RequestBody int nights){
+		Bookings booking = new Bookings();
+		booking.setListingId(id);
+		booking.setEmail(email);
+		booking.setDuration(nights);
 		listingsSvc.createBooking(booking);
+		
 
         return ResponseEntity
             .status(HttpStatus.OK)
             .contentType(MediaType.APPLICATION_JSON)
-            .body("");
+            .body("{ }");
     }
 }	
 		
